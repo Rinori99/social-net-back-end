@@ -18,10 +18,10 @@ class UserController {
     private initializeRoutes(): void {
         this.router.get(`${this.path}/current`, passport.authenticate('jwt', { session: false }), this.getCurrentUser);
         this.router.get(`${this.path}/random`, passport.authenticate('jwt', { session: false }), this.getNRandomPeople);
-        this.router.get(`${this.path}/:id/friends`, passport.authenticate('jwt', { session: false }), this.getFriendsByUserId);
+        this.router.get(`${this.path}/friends`, passport.authenticate('jwt', { session: false }), this.getFriendsByUserId);
         this.router.get(`${this.path}/:id`, passport.authenticate('jwt', { session: false }), this.getUserById);
         this.router.get(this.path, passport.authenticate('jwt', { session: false }), this.getUsersBySimilarName);
-        this.router.get(`${this.path}/:profileId/friends-with/:userId`, passport.authenticate('jwt', { session: false }), this.checkFriendship);
+        this.router.get(`${this.path}/:profileId/my-friend`, passport.authenticate('jwt', { session: false }), this.checkFriendship);
         this.router.post(`${this.path}/connection`, passport.authenticate('jwt', { session: false }), this.createFriendship);
         this.router.post(this.path, this.createUser);
         this.router.post(`${this.path}/login`, this.login);
@@ -51,7 +51,7 @@ class UserController {
     }
 
     getFriendsByUserId = (request: express.Request, response: express.Response) => {
-        const userId = request.params.id;
+        const userId = request.query['userId'] ? (request.query['userId'] as string) : (request.user as string);
 
         this.userService.findFriendsByUserId(userId).then((users) => {
             response.send(users);
@@ -68,8 +68,7 @@ class UserController {
 
     checkFriendship = (request: express.Request, response: express.Response) => {
         const profileId: string = request.params.profileId;
-        const userId: string = request.params.userId;
-
+        const userId: string = request.user as string;
         this.userService.checkFriendship(profileId, userId).then(isConnected => response.send({ isConnected: isConnected}));
     }
 

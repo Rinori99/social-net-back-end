@@ -34,6 +34,8 @@ class LikeController {
     unlikePost = (request: express.Request, response: express.Response) => {
         const postId: string = request.query['postId'] as string;
 
+        console.log(request.user as string);
+
         this.likeService.unlikePost(postId, request.user as string).then(() => response.send(204));
     }
 }

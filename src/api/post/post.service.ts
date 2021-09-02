@@ -18,24 +18,24 @@ class PostService {
     }
     
     public async findFeedPostsForUser(userId: string): Promise<PostTransport[]> {
-        const postsResult = await pool.query('SELECT * FROM post WHERE posted_by IN (SELECT friend_2_id FROM friendship WHERE friend_1_id = $1)', [userId]);
+        const postsResult = await pool.query('SELECT * FROM post WHERE (posted_by = $1) OR (posted_by IN (SELECT friend_2_id FROM friendship WHERE friend_1_id = $1))', [userId]);
         const posts: Post[] = postsResult.rows.map((postRow: any) => this.mapPostRowToPost(postRow));
         
-        return this.getPostTransportsFromPosts(posts);
+        return this.getPostTransportsFromPosts(posts, userId);
     }
 
-    public async findPostsByHashtag(hashtag: string): Promise<PostTransport[]> {
+    public async findPostsByHashtag(hashtag: string, currentUserId: string): Promise<PostTransport[]> {
         const postsResult = await pool.query(`SELECT * FROM post WHERE content LIKE '%#${hashtag}%'`);
         const posts: Post[] = postsResult.rows.map((postRow: any) => this.mapPostRowToPost(postRow));
 
-        return this.getPostTransportsFromPosts(posts);
+        return this.getPostTransportsFromPosts(posts, currentUserId);
     }
 
-    public async findPostsByUserId(userId: string): Promise<PostTransport[]> {
+    public async findPostsByUserId(userId: string, currentUserId: string): Promise<PostTransport[]> {
         const postsResult = await pool.query('SELECT * FROM post WHERE posted_by = $1', [userId]);
         const posts: Post[] = postsResult.rows.map((postRow: any) => this.mapPostRowToPost(postRow));
 
-        return this.getPostTransportsFromPosts(posts);
+        return this.getPostTransportsFromPosts(posts, currentUserId);
     }
 
     public async createPost(postedBy: string, content: string): Promise<PostTransport> {
@@ -57,7 +57,7 @@ class PostService {
             dateCreated: dateCreated,
             content: content,
             postedBy: postedBy
-        });
+        }, postedBy);
     }
 
     public async updatePostContent(postId: string, content: string): Promise<void> {
@@ -138,8 +138,7 @@ class PostService {
         }
     }
 
-    private async getPostTransportFromPost(post: Post): Promise<PostTransport> {
-        const currentUserId: string = 'aef0f147-7cc2-4c91-bfa5-2554eae876d1';
+    private async getPostTransportFromPost(post: Post, currentUserId: string): Promise<PostTransport> {
         const postedByUser: User = await this.userService.findUserById(post.postedBy) as User;
         const likesCountResult = await pool.query('SELECT COUNT(*) as likes_count FROM post_like WHERE post_id = $1', [post.id]);
         const likesCount: number = likesCountResult.rows[0]['likes_count'] as number;
@@ -157,10 +156,8 @@ class PostService {
         }        
     }
 
-    private async getPostTransportsFromPosts(posts: Post[]): Promise<PostTransport[]> {
+    private async getPostTransportsFromPosts(posts: Post[], currentUserId: string): Promise<PostTransport[]> {
         // to be deleted when authentication is implemented:
-        const currentUserId: string = 'aef0f147-7cc2-4c91-bfa5-2554eae876d1';
-
         const postTransports: PostTransport[] = [];
 
         for (let i = 0; i < posts.length; i++) {

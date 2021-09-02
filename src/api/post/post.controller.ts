@@ -29,13 +29,13 @@ class PostController {
     getPostsByHashtag = (request: express.Request, response: express.Response) => {
         const hashtag: string = request.query['hashtag'] as string;
 
-        this.postService.findPostsByHashtag(hashtag).then(posts => response.send(posts));
+        this.postService.findPostsByHashtag(hashtag, request.user as string).then(posts => response.send(posts));
     }
 
     getPostsByUserId = (request: express.Request, response: express.Response) => {
-        const userId: string = request.query['userId'] as string;
+        const userId: string = request.query['userId'] ? (request.query['userId'] as string) : (request.user as string);
 
-        this.postService.findPostsByUserId(userId).then(posts => response.send(posts));
+        this.postService.findPostsByUserId(userId, request.user as string).then(posts => response.send(posts));
     }
 
     createPost = (request: express.Request, response: express.Response) => {

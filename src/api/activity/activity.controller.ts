@@ -18,7 +18,7 @@ class ActivityController {
     }
 
     getActivitiesByUserId = async (request: express.Request, response: express.Response) => {
-        const userId: string = request.query['userId'] as string;
+        const userId: string = request.query['userId'] ? (request.query['userId'] as string) : (request.user as string);
 
         this.activityService.findActivitiesByUserId(userId).then(activities => {
             response.send(activities);
