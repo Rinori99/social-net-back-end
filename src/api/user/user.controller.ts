@@ -74,6 +74,7 @@ class UserController {
 
     createUser = (request: express.Request, response: express.Response) => {
         const user: User = request.body;
+        console.log(user);
         user.id = uuid();
         user.dateCreated = new Date();
 
