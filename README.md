@@ -29,6 +29,10 @@ Installation:
 
 `npm install`
 
+To build the project:
+
+`npm run build`
+
 To Start Server:
 
 `npm start`
