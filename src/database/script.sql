@@ -2,6 +2,7 @@ CREATE TABLE person (
     id varchar(36) NOT NULL PRIMARY KEY,
     email varchar(255) NOT NULL,
     password varchar(255) NOT NULL,
+    salt varchar(255) NOT NULL,
     date_created timestamp,
     first_name varchar(255) NOT NULL,
     last_name varchar(255) NOT NULL,
