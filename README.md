@@ -38,7 +38,7 @@ To Start Server:
 `npm start`
 
 ## Demo
-![socialnet_demo](https://user-images.githubusercontent.com/42043751/137647233-b3a74548-f60c-4bf2-8481-0c8957c75d15.gif)
+![social_net_demo](https://user-images.githubusercontent.com/42043751/137647704-d0244bf1-bf33-443c-95ce-eac1e455f641.gif)
 
 
 ## Author(s)
