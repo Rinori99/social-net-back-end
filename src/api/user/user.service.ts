@@ -61,7 +61,11 @@ class UserService {
         await pool.query('INSERT INTO person (id, email, password, date_created, first_name, last_name, birthdate,'
                 + ' living_in, education, working_at, hobby, salt) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)', 
                 [user.id, user.email, user.password, user.dateCreated, user.firstName, user.lastName, user.birthdate,
-                user.livingIn, user.education, user.workingAt, user.hobby, user.salt]);
+                user.livingIn, user.education, user.workingAt, user.hobby, user.salt], (err: any, res: any) => {
+                    if (err) {
+                        throw err;
+                    }
+                });
     }
 
     public async login(email: string, password: string): Promise<any> {

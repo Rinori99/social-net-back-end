@@ -74,11 +74,14 @@ class UserController {
 
     createUser = (request: express.Request, response: express.Response) => {
         const user: User = request.body;
-        console.log(user);
+        
         user.id = uuid();
         user.dateCreated = new Date();
 
-        this.userService.createUser(user).then(() => response.send(201));
+        this.userService.createUser(user).then(() => {
+            console.log("Worked!");
+            response.send(201);
+        });
     }
 
     login = (request: express.Request, response: express.Response) => {
